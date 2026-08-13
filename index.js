@@ -2,7 +2,7 @@ app.post('/registrar_puntaje', async (req, res) => {
   const { 
     nombreUsuario, etnia, curso, institucion, idNivel, 
     fechaInicio, fechaFin, tiempoJuego, estado, correctas, incorrectas, intentos 
-  } = req.body;
+  } = req.body; 
   
   try {
     // 1. Insertar o buscar la Escuela
