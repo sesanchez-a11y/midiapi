@@ -9,16 +9,32 @@ const pool = new Pool({
 });
 
 app.post('/registrar_puntaje', async (req, res) => {
-  const { idEstudiante, idNivel, puntaje, completado } = req.body;
+  // Recibimos los datos desde Android (coinciden con tu GameScoreRequest de Kotlin)
+  const { 
+    idUsuario, 
+    idNivel, 
+    fechaInicio, 
+    fechaFin, 
+    tiempoJuego, 
+    estado, 
+    correctas, 
+    incorrectas, 
+    intentos 
+  } = req.body;
+  
   try {
-    await pool.query(
-      'INSERT INTO puntajes (id_estudiante, id_nivel, puntaje, completado) VALUES ($1, $2, $3, $4)',
-      [idEstudiante, idNivel, puntaje, completado]
-    );
-    res.status(200).json({ message: "Guardado correctamente" });
+    const query = `
+      INSERT INTO public.nivel_usuario 
+      (id_usuario, id_nivel, fecha_inicio, fecha_fin, tiempo_juego, estado, correctas, incorrectas, intentos) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `;
+    const values = [idUsuario, idNivel, fechaInicio, fechaFin, tiempoJuego, estado, correctas, incorrectas, intentos];
+    
+    await pool.query(query, values);
+    res.status(200).json({ message: "¡Guardado exitoso en nivel_usuario!" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error en la base de datos" });
+    res.status(500).json({ error: "Error en base de datos: " + err.message });
   }
 });
 
